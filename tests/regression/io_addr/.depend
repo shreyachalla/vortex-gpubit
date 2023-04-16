@@ -1,0 +1,3 @@
+main.o: main.cpp \
+ /export/nethome/schalla33/vortex-gpubit/driver/include/vortex.h \
+ ../../../hw/VX_config.h common.h

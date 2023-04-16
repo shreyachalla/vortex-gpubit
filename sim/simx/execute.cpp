@@ -202,6 +202,68 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
     for (uint32_t t = 0; t < num_threads; ++t) {
       if (!tmask_.test(t))
         continue;
+      printf("reaching");
+      printf("func7: %d", func7);
+      if (func7 == 0x5 && func3 == 0x6) {
+        // MAX 
+        printf("**MAX**: "); 
+        if ((WordI)rsdata[t][0].i > (WordI)rsdata[t][1].i) {
+          rddata[t].i = (WordI)rsdata[t][0].i; 
+          printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+        } else {
+          rddata[t].i = (WordI)rsdata[t][1].i;
+          printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+        }
+
+      }
+
+      if (func7 == 0x5 && func3 == 0x7) {
+        // UMAX 
+        printf("**UMAX**: ");
+        if ((WordI)rsdata[t][0].i > (WordI)rsdata[t][1].i) {
+          rddata[t].i = (WordI)rsdata[t][0].i; 
+          printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+        } else {
+          rddata[t].i = (WordI)rsdata[t][1].i;
+          printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+        }
+
+      }
+
+       if (func7 == 0x5 && func3 == 0x4) {
+        // MIN 
+        printf("**MIN**: "); 
+        if ((WordI)rsdata[t][0].i < (WordI)rsdata[t][1].i) {
+          rddata[t].i = (WordI)rsdata[t][0].i; 
+          printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+        } else {
+          rddata[t].i = (WordI)rsdata[t][1].i;
+          printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+        }
+
+      }
+
+      if (func7 == 0x4 && func3 == 0x4) {
+        // ZEXT 
+        // obtain rs [15:0]
+        printf("**ZEXT.H**: "); 
+        rddata[t].i = (WordI)rsdata[t][0].i & 0xFFFF;
+        printf("src1: %d, result: %d\n", rsdata[t][0].i, rddata[t].i);
+      }
+
+       if (func7 == 0x5 && func3 == 0x5) {
+        // UMIN 
+        printf("**UMIN**: ");
+        if ((WordI)rsdata[t][0].i < (WordI)rsdata[t][1].i) {
+          rddata[t].i = (WordI)rsdata[t][0].i; 
+          printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+        } else {
+          rddata[t].i = (WordI)rsdata[t][1].i;
+          printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+        }
+
+      }
+
       if (func7 & 0x1) {
         switch (func3) {
         case 0: {
@@ -287,6 +349,9 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
           }
           trace->alu.type = AluType::IDIV;
           break;
+        }
+        case 8: {
+
         } 
         default:
           std::abort();
@@ -362,6 +427,21 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
     for (uint32_t t = 0; t < num_threads; ++t) {
       if (!tmask_.test(t))
         continue;
+      
+      if (func7 == 0x30 && func3 == 0x1) {
+        if (rsdata[t][1].i == 0x4) {
+          // sext.b 
+          printf("**SEXT.B**\n"); 
+          printf("src1: %d, result: %d\n", rsdata[t][0].i, rddata[t].i);
+          rddata[t].i = sext(rsdata[t][0].i & 0xFF, 32); 
+
+        } else {
+          // sext.h 
+          printf("**SEXT.H**\n"); 
+          printf("src1: %d, result: %d\n", rsdata[t][0].i, rddata[t].i);
+          rddata[t].i = sext(rsdata[t][0].i & 0xFFFF, 32); 
+        }
+      }
       switch (func3) {
       case 0: {
         // RV32I: ADDI
@@ -1404,10 +1484,120 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
         trace->mem_addrs.at(t).push_back({mem_addr, 4});
       }
     } break;
+    // case 6: {
+    //   // MAX 
+    //   printf("***MAX***: ");
+    //   trace->exe_type = ExeType::ALU;    
+    //   trace->alu.type = AluType::ARITH;
+    //   trace->used_iregs.set(rsrc0);
+    //   trace->used_iregs.set(rsrc1);
+    //   for (uint32_t t = 0; t < num_threads; ++t) {
+    //     if (!tmask_.test(t))
+    //       continue;
+    //     if ((WordI)rsdata[t][0].i > (WordI)rsdata[t][1].i) {
+    //       rddata[t].i = (WordI)rsdata[t][0].i; 
+    //       printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+    //     } else {
+    //       rddata[t].i = (WordI)rsdata[t][1].i;
+    //       printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+    //     }
+    //   }
+    // } break; 
+    // case 7: {
+    //   //UMAX
+    //   printf("***UMAX***: ");
+    //   trace->exe_type = ExeType::ALU;    
+    //   trace->alu.type = AluType::ARITH;
+    //   trace->used_iregs.set(rsrc0);
+    //   trace->used_iregs.set(rsrc1);
+    //   for (uint32_t t = 0; t < num_threads; ++t) {
+    //     if (!tmask_.test(t))
+    //       continue;
+    //     if ((WordI)rsdata[t][0].i > (WordI)rsdata[t][1].i) {
+    //       rddata[t].i = (WordI)rsdata[t][0].i; 
+    //       printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+    //     } else {
+    //       rddata[t].i = (WordI)rsdata[t][1].i;
+    //        printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+    //     }
+    //   }
+    // } break; 
+    //  case 8: {
+    //   //MIN 
+    //   printf("***MIN***: ");
+    //   trace->exe_type = ExeType::ALU;    
+    //   trace->alu.type = AluType::ARITH;
+    //   trace->used_iregs.set(rsrc0);
+    //   trace->used_iregs.set(rsrc1);
+    //   for (uint32_t t = 0; t < num_threads; ++t) {
+    //     if (!tmask_.test(t))
+    //       continue;
+    //     if ((WordI)rsdata[t][0].i < (WordI)rsdata[t][1].i) {
+    //       rddata[t].i = (WordI)rsdata[t][0].i; 
+    //       printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+    //     } else {
+    //       rddata[t].i = (WordI)rsdata[t][1].i;
+    //        printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+    //     }
+    //   }
+    // } break; 
+    // case 9: {
+    //  //UMIN
+    //  printf("***UMIN***: ");
+    //  trace->exe_type = ExeType::ALU;
+    //  trace->alu.type = AluType::ARITH;
+    //  trace->used_iregs.set(rsrc0);
+    //  trace->used_iregs.set(rsrc1);
+    //  for (uint32_t t = 0; t < num_threads; ++t) {
+    //     if (!tmask_.test(t))
+    //       continue;
+    //     if ((WordI)rsdata[t][0].i < (WordI)rsdata[t][1].i) {
+    //       rddata[t].i = (WordI)rsdata[t][0].i; 
+    //        printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+    //     } else {
+    //       rddata[t].i = (WordI)rsdata[t][1].i;
+    //        printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+    //     } 
+    //  }
+    // } break; 
+    // case 10: {
+    //   // SEXT.B
+    //   trace->exe_type = ExeType::ALU;    
+    //   trace->alu.type = AluType::ARITH;    
+    //   trace->used_iregs.set(rsrc0);
+    //   for (uint32_t t = 0; t < num_threads; ++t) {
+    //     if (!tmask_.test(t))
+    //       continue;
+    //     rddata[t].i = sext(rsdata[t][0].i & 0xFF, 32);
+    //   }
+    // } break;
+    // case 11: {
+    //   // SEXT.H 
+    //   trace->exe_type = ExeType::ALU;    
+    //   trace->alu.type = AluType::ARITH;    
+    //   trace->used_iregs.set(rsrc0);
+    //   for (uint32_t t = 0; t < num_threads; ++t) {
+    //     if (!tmask_.test(t))
+    //       continue;
+    //     rddata[t].i = sext(rsdata[t][0].i & 0xFFFF, 32);
+    //   }
+    // } break; 
+    // case 12: {
+    //   // ZEXT.H 
+    //   trace->exe_type = ExeType::ALU;
+    //   trace->alu.type = AluType::ARITH;
+    //   trace->used_iregs.set(rsrc0);
+    //   trace->used_iregs.set(rsrc1);
+    //   for (uint32_t t = 0; t < num_threads; ++t) {
+    //     if (!tmask_.test(t))
+    //       continue; 
+    //     rddata[t].i = (WordI)rsdata[t][0].i & 0xFFFF;
+    //   }
+    // } break;
     default:
       std::abort();
     }
-  }  break;
+  } break; 
   case GPU: {    
     switch (func3) {
     case 0: { // TEX

@@ -124,6 +124,49 @@ inline void vx_prefetch(unsigned addr) {
     asm volatile (".insn s 0x6b, 5, x0, 0(%0)" :: "r"(addr) );
 }
 
+// Maximum 
+inline void vx_max(signed val1, signed val2) {
+    // func3 = 6 
+    asm volatile (".insn s 0x33, 6, %1, 0(%0)" :: "r"(val1), "r"(val2));
+}
+
+// Unsigned Maximum 
+inline void vx_umax(unsigned val1, unsigned val2) {
+    // func3 = 7
+    asm volatile (".insn s 0x33, 7, %1, 0(%0)" :: "r"(val1), "r"(val2));
+}
+
+// Minimum 
+inline void vx_min(signed val1, signed val2) {
+    // func3 = 8 
+    asm volatile (".insn s 0x33, 4, %1, 0(%0)" :: "r"(val1), "r"(val2));
+}
+
+// Unsigned Minimum  
+inline void vx_umin(unsigned val1, unsigned val2) {
+    // func3 = 9 
+    asm volatile (".insn s 0x33, 5, %1, 0(%0)" :: "r"(val1), "r"(val2));
+}
+
+// sext.b
+inline void vx_sextb(signed val1) {
+    // func3 = 10 
+    asm volatile (".insn s 0x13, 1, x0, 0(%0)" :: "r"(val1));
+}
+
+//sext.h 
+inline void vx_sexth(signed val1) {
+    // func3 = 11 
+    asm volatile (".insn s 0x13, 1, 0x0, 0(%0)" :: "r"(val1));
+}
+
+// zext.h 
+inline void vx_zexth(unsigned val1) {
+    // func3 = 12 
+    asm volatile (".insn s 0x33, 4, 0x0, 0(%0)" :: "r"(val1));
+}
+
+
 // Return active warp's thread id 
 inline int vx_thread_id() {
     int result;
