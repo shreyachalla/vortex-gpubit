@@ -96,24 +96,24 @@ static const char* op_string(const Instr &instr) {
   case Opcode::LUI_INST:   return "LUI";
   case Opcode::AUIPC_INST: return "AUIPC";
   case Opcode::R_INST:
-    // if (func7 == 0x5 && func3 == 0x6) {
-    //   return "MAX";  // integer max
-    // }  
-    // if (func7 == 0x5 && func3 == 0x7) {
-    //   return "UMAX";  // integer umax
-    // }  
+    if (func7 == 0x5 && func3 == 0x6) {
+      return "MAX";  // integer max
+    }  
+    if (func7 == 0x5 && func3 == 0x7) {
+      return "UMAX";  // integer umax
+    }  
 
-    // if (func7 == 0x5 && func3 == 0x4) {
-    //   return "MIN";  // integer min
-    // }
+    if (func7 == 0x5 && func3 == 0x4) {
+      return "MIN";  // integer min
+    }
 
-    // if (func7 == 0x5 && func3 == 0x5) {
-    //   return "UMIN";  // integer umin
-    // }
+    if (func7 == 0x5 && func3 == 0x5) {
+      return "UMIN";  // integer umin
+    }
 
-    // if (func7 == 0x4 && func3 == 0x4) {
-    //   return "ZEXT";  // zext
-    // }
+    if (func7 == 0x4 && func3 == 0x4) {
+      return "ZEXT";  // zext
+    }
 
     if (func7 & 0x1) {
       switch (func3) {
@@ -143,9 +143,14 @@ static const char* op_string(const Instr &instr) {
       }
     }
   case Opcode::I_INST:
-    // if (func7 == 0x30 && func3 == 0x1) {
-    //   return "SEXT"; 
-    // }
+    if (func3 == 0x1) {
+      if (immsrc == 0x4) {
+        return "SEXTB"; 
+      } else {
+        return "SEXTH";
+      }
+      
+    }
     switch (func3) {
     case 0: return "ADDI";
     case 1: return "SLLI";
@@ -374,13 +379,6 @@ static const char* op_string(const Instr &instr) {
     case 3: return "JOIN";
     case 4: return "BAR";
     case 5: return "PREFETCH";
-    case 6: return "MAX";
-    case 7: return "UMAX"; 
-    case 8: return "MIN";
-    case 9: return "UMIN";
-    case 10: return "SEXTB";
-    case 11: return "SEXTH";
-    case 12: return "ZEXTH"; 
     default:
       std::abort();
     }

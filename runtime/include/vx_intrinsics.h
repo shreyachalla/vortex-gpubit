@@ -125,45 +125,47 @@ inline void vx_prefetch(unsigned addr) {
 }
 
 // Maximum 
-inline void vx_max(signed val1, signed val2) {
+inline void vx_max(signed val1, signed val2, signed val3) {
     // func3 = 6 
-    asm volatile (".insn s 0x33, 6, %1, 0(%0)" :: "r"(val1), "r"(val2));
+    asm volatile (".insn r 0x33, 6, 5, %0, %1, %2" :: "r"(val1), "r"(val2), "r"(val3));
 }
 
 // Unsigned Maximum 
-inline void vx_umax(unsigned val1, unsigned val2) {
+inline void vx_umax(unsigned val1, unsigned val2, unsigned val3) {
     // func3 = 7
-    asm volatile (".insn s 0x33, 7, %1, 0(%0)" :: "r"(val1), "r"(val2));
+    asm volatile (".insn r 0x33, 7, 5, %0, %1, %2" :: "r"(val1), "r"(val2), "r"(val3));
 }
 
 // Minimum 
-inline void vx_min(signed val1, signed val2) {
+inline void vx_min(signed val1, signed val2, signed val3) {
     // func3 = 8 
-    asm volatile (".insn s 0x33, 4, %1, 0(%0)" :: "r"(val1), "r"(val2));
+    asm volatile (".insn r 0x33, 4, 5, %0, %1, %2" :: "r"(val1), "r"(val2), "r"(val3));
 }
 
 // Unsigned Minimum  
-inline void vx_umin(unsigned val1, unsigned val2) {
+inline void vx_umin(unsigned val1, unsigned val2, unsigned val3) {
     // func3 = 9 
-    asm volatile (".insn s 0x33, 5, %1, 0(%0)" :: "r"(val1), "r"(val2));
-}
-
-// sext.b
-inline void vx_sextb(signed val1) {
-    // func3 = 10 
-    asm volatile (".insn s 0x13, 1, x0, 0(%0)" :: "r"(val1));
-}
-
-//sext.h 
-inline void vx_sexth(signed val1) {
-    // func3 = 11 
-    asm volatile (".insn s 0x13, 1, 0x0, 0(%0)" :: "r"(val1));
+    asm volatile (".insn r 0x33, 5, 5, %0, %1, %2" :: "r"(val1), "r"(val2), "r"(val3));
 }
 
 // zext.h 
-inline void vx_zexth(unsigned val1) {
+inline void vx_zexth(unsigned val1, unsigned val2, unsigned val3) {
     // func3 = 12 
-    asm volatile (".insn s 0x33, 4, 0x0, 0(%0)" :: "r"(val1));
+    asm volatile (".insn r 0x33, 4, 4, %0, %1, %2" :: "r"(val1), "r"(val2), "r"(val3));
+}
+
+// sext.b
+inline void vx_sextb(signed val1, signed val2) {
+    // func3 = 10 
+    // 0x604 
+    asm volatile (".insn i 0x13, 1, %0, %1, 0x604" :: "r"(val2), "r"(val1));
+}
+
+//sext.h 
+inline void vx_sexth(signed val1, signed val2) {
+    // func3 = 11 
+    // 0x605
+    asm volatile (".insn i 0x13, 1, %0, %1, 0x605" :: "r"(val2), "r"(val1));
 }
 
 

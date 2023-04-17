@@ -202,8 +202,30 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
     for (uint32_t t = 0; t < num_threads; ++t) {
       if (!tmask_.test(t))
         continue;
-      printf("reaching");
-      printf("func7: %d", func7);
+      
+      // if (func7 == 30) {
+      //   if (func3 == 4) {
+      //     // SEXT.B
+      //     printf("**SEXT.B**\n"); 
+      //     rddata[t].i = sext(rsdata[t][0].i & 0xFF, 32); 
+      //     printf("src1: %d, result: %d\n", rsdata[t][0].i, rddata[t].i);
+
+      //   } else {
+      //     // SEXT.H 
+      //     printf("**SEXT.H**\n"); 
+      //     rddata[t].i = sext(rsdata[t][0].i & 0xFFFF, 32); 
+      //     printf("src1: %d, result: %d\n", rsdata[t][0].i, rddata[t].i);
+
+      //   }
+        // printf("************\n");
+        // printf("rsdata 1: %d\n", rsdata[t][0].i); 
+        // printf("rsdata 2: %d\n", rsdata[t][1].i); 
+        // printf("rddate: %d\n", rddata[t].i); 
+        // printf("immsrc: %d\n", immsrc); 
+      //} 
+       
+      // printf("reaching");
+      // printf("func7: %d", func7);
       if (func7 == 0x5 && func3 == 0x6) {
         // MAX 
         printf("**MAX**: "); 
@@ -217,7 +239,7 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
 
       }
 
-      if (func7 == 0x5 && func3 == 0x7) {
+      if (func3 == 0x7) {
         // UMAX 
         printf("**UMAX**: ");
         if ((WordI)rsdata[t][0].i > (WordI)rsdata[t][1].i) {
@@ -251,7 +273,7 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
         printf("src1: %d, result: %d\n", rsdata[t][0].i, rddata[t].i);
       }
 
-       if (func7 == 0x5 && func3 == 0x5) {
+       if (func7== 0x5 && func3 == 0x5) {
         // UMIN 
         printf("**UMIN**: ");
         if ((WordI)rsdata[t][0].i < (WordI)rsdata[t][1].i) {
@@ -428,20 +450,26 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
       if (!tmask_.test(t))
         continue;
       
-      if (func7 == 0x30 && func3 == 0x1) {
-        if (rsdata[t][1].i == 0x4) {
+      if (func3 == 1) {
+        // printf("************\n");
+        // printf("rsdata 1: %d\n", rsdata[t][0].i); 
+        // printf("rsdata 2: %d\n", rsdata[t][1].i); 
+        // printf("rddate: %d\n", rddata[t].i); 
+        // printf("immsrc: %d\n", immsrc); 
+        if (immsrc == 4) {
           // sext.b 
           printf("**SEXT.B**\n"); 
-          printf("src1: %d, result: %d\n", rsdata[t][0].i, rddata[t].i);
           rddata[t].i = sext(rsdata[t][0].i & 0xFF, 32); 
+          printf("src1: %d, result: %d\n", rsdata[t][0].i, rddata[t].i);
 
-        } else {
+        } else if (immsrc == 5) {
           // sext.h 
           printf("**SEXT.H**\n"); 
-          printf("src1: %d, result: %d\n", rsdata[t][0].i, rddata[t].i);
-          rddata[t].i = sext(rsdata[t][0].i & 0xFFFF, 32); 
+          rddata[t].i = sext(rsdata[t][0].i & 0xFFFF, 32);
+          printf("src1: %d, result: %d\n", rsdata[t][0].i, rddata[t].i); 
         }
       }
+      
       switch (func3) {
       case 0: {
         // RV32I: ADDI
