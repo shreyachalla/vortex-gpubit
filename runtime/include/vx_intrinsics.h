@@ -150,20 +150,17 @@ inline void vx_umin(unsigned val1, unsigned val2, unsigned val3) {
 
 // zext.h 
 inline void vx_zexth(unsigned val1, unsigned val2, unsigned val3) {
-    // func3 = 12 
     asm volatile (".insn r 0x33, 4, 4, %0, %1, %2" :: "r"(val1), "r"(val2), "r"(val3));
 }
 
 // sext.b
 inline void vx_sextb(signed val1, signed val2) {
-    // func3 = 10 
     // 0x604 
     asm volatile (".insn i 0x13, 1, %0, %1, 0x604" :: "r"(val2), "r"(val1));
 }
 
 //sext.h 
 inline void vx_sexth(signed val1, signed val2) {
-    // func3 = 11 
     // 0x605
     asm volatile (".insn i 0x13, 1, %0, %1, 0x605" :: "r"(val2), "r"(val1));
 }
