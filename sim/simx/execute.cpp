@@ -459,14 +459,27 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
         if (immsrc == 4) {
           // sext.b 
           printf("**SEXT.B**\n"); 
-          rddata[t].i = sext(rsdata[t][0].i & 0xFF, 32); 
-          printf("src1: %d, result: %d\n", rsdata[t][0].i, rddata[t].i);
+          if (int(rsdata[t][0].i  & (1 << 7)) != 0) {
+            // MSB is 1 
+            rddata[t].i = sext(int((rsdata[t][0].i & 0xFF) | (0xFFFFFF00)), 32); 
+
+          } else {
+            rddata[t].i = sext(rsdata[t][0].i & 0xFF, 32); 
+          }
+          
+          printf("src1: %d, result: %u\n", rsdata[t][0].i, int(rddata[t].i));
 
         } else if (immsrc == 5) {
           // sext.h 
-          printf("**SEXT.H**\n"); 
-          rddata[t].i = sext(rsdata[t][0].i & 0xFFFF, 32);
-          printf("src1: %d, result: %d\n", rsdata[t][0].i, rddata[t].i); 
+          printf("**SEXT.H**\n");  
+          if (int(rsdata[t][0].i  & (1 << 15)) != 0) {
+            // MSB is 1 
+            rddata[t].i = sext(int((rsdata[t][0].i & 0xFFFF) | (0xFFFF0000)), 32); 
+
+          } else {
+            rddata[t].i = sext(rsdata[t][0].i & 0xFFFF, 32); 
+          }
+           printf("src1: %d, result: %u\n", rsdata[t][0].i, int(rddata[t].i));
         }
       }
       

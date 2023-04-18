@@ -17,8 +17,8 @@ void kernel_body(int task_id, kernel_arg_t* arg) {
 		// vx_umin(54, 200, 10);
 		// vx_min(-54, -200, 10);
 
-		vx_sexth(9, 4);
-		vx_sextb(8, 4);
+		vx_sexth(255, 4);
+		vx_sextb(65535, 4);
 		//vx_zexth(8, -2, 10); 
 	
 		dst_ptr[offset+i] = src0_ptr[offset+i] + src1_ptr[offset+i];

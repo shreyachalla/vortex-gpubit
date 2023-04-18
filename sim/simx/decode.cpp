@@ -144,7 +144,7 @@ static const char* op_string(const Instr &instr) {
     }
   case Opcode::I_INST:
     if (func3 == 0x1) {
-      if (immsrc == 0x4) {
+      if (imm == 0x4) {
         return "SEXTB"; 
       } else {
         return "SEXTH";
