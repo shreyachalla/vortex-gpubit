@@ -22,6 +22,8 @@ module VX_alu_unit #(
     wire [`NUM_THREADS-1:0][31:0] shr_result;
     reg [`NUM_THREADS-1:0][31:0]  msc_result;
 
+    wire req_is_max; 
+
     wire ready_in;    
 
     `UNUSED_VAR (alu_req_if.op_mod)
@@ -56,13 +58,20 @@ module VX_alu_unit #(
 
     for (genvar i = 0; i < `NUM_THREADS; i++) begin 
         always @(*) begin
-            case (alu_op)
+            if (req_is_max) begin 
+                msc_result[i] = alu_in1[i] > alu_in2[i] ? alu_in1[i] : alu_in2[i]; // max 
+            end 
+            else begin 
+                case (alu_op)
                 `INST_ALU_AND: msc_result[i] = alu_in1[i] & alu_in2_imm[i];
                 `INST_ALU_OR:  msc_result[i] = alu_in1[i] | alu_in2_imm[i];
-                `INST_ALU_XOR: msc_result[i] = alu_in1[i] ^ alu_in2_imm[i];                
+                `INST_ALU_XOR: msc_result[i] = alu_in1[i] ^ alu_in2_imm[i];
+               
+                //`INST_ALU_IS_MIN: msc_result[i] = alu_in1[i] < alu_in2[i] ? alu_in2[i] : alu_in1[i]; // mini                  
                 //`INST_ALU_SLL,
                 default:  msc_result[i] = alu_in1[i] << alu_in2_imm[i][4:0];
             endcase
+            end
         end
     end
             
@@ -113,14 +122,14 @@ module VX_alu_unit #(
     assign alu_ready_in = alu_ready_out || ~alu_valid_out;
 
     VX_pipe_register #(
-        .DATAW  (1 + `UUID_BITS + `NW_BITS + `NUM_THREADS + 32 + `NR_BITS + 1 + (`NUM_THREADS * 32) + 1 + `INST_BR_BITS + 1 + 1 + 32),
+        .DATAW  (1 + 1 + `UUID_BITS + `NW_BITS + `NUM_THREADS + 32 + `NR_BITS + 1 + (`NUM_THREADS * 32) + 1 + `INST_BR_BITS + 1 + 1 + 32),
         .RESETW (1)
     ) pipe_reg (
         .clk      (clk),
         .reset    (reset),
         .enable   (alu_ready_in),
-        .data_in  ({alu_valid_in,  alu_req_if.uuid, alu_req_if.wid, alu_req_if.tmask, alu_req_if.PC, alu_req_if.rd, alu_req_if.wb, alu_jal_result, is_br_op,   br_op,   is_less,   is_equal,   br_dest}),
-        .data_out ({alu_valid_out, alu_uuid,        alu_wid,        alu_tmask,        alu_PC,        alu_rd,        alu_wb,        alu_data,       is_br_op_r, br_op_r, is_less_r, is_equal_r, br_dest_r})
+        .data_in  ({alu_req_if.is_max, alu_valid_in,  alu_req_if.uuid, alu_req_if.wid, alu_req_if.tmask, alu_req_if.PC, alu_req_if.rd, alu_req_if.wb, alu_jal_result, is_br_op,   br_op,   is_less,   is_equal,   br_dest}),
+        .data_out ({req_is_max, alu_valid_out, alu_uuid,        alu_wid,        alu_tmask,        alu_PC,        alu_rd,        alu_wb,        alu_data,       is_br_op_r, br_op_r, is_less_r, is_equal_r, br_dest_r})
     );
 
     `UNUSED_VAR (br_op_r)
@@ -229,6 +238,10 @@ module VX_alu_unit #(
             dpi_trace("%d: core%0d-branch: wid=%0d, PC=%0h, taken=%b, dest=%0h (#%0d)\n", 
                 $time, CORE_ID, branch_ctl_if.wid, alu_commit_if.PC, branch_ctl_if.taken, branch_ctl_if.dest, alu_uuid);
         end
+       if (alu_req_if.is_max) begin 
+        dpi_trace("%d: core%0d-ismax: rs1=%0d, rs2=%0d, rd=%0d)\n", 
+                $time, CORE_ID, alu_req_if.rs1_data, alu_req_if.rs2_data, alu_req_if.rd);
+       end 
     end
 `endif
 

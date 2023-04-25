@@ -36,21 +36,23 @@ module VX_dispatch (
 
     wire [31:0] next_PC = ibuffer_if.PC + 4;
 
-    // ALU unit
 
+
+    // ALU unit
     wire alu_req_valid = ibuffer_if.valid && (ibuffer_if.ex_type == `EX_ALU);
     wire [`INST_ALU_BITS-1:0] alu_op_type = `INST_ALU_BITS'(ibuffer_if.op_type);
+    wire alu_is_max = `INST_ALU_IS_MAX(ibuffer_if.op_mod); 
     
     VX_skid_buffer #(
-        .DATAW   (`UUID_BITS + `NW_BITS + `NUM_THREADS + 32 + 32 + `INST_ALU_BITS + `INST_MOD_BITS + 32 + 1 + 1 + `NR_BITS + 1 + `NT_BITS + (2 * `NUM_THREADS * 32)),
+        .DATAW   (1 + `UUID_BITS + `NW_BITS + `NUM_THREADS + 32 + 32 + `INST_ALU_BITS + `INST_MOD_BITS + 32 + 1 + 1 + `NR_BITS + 1 + `NT_BITS + (2 * `NUM_THREADS * 32)),
         .OUT_REG (1)
     ) alu_buffer (
         .clk       (clk),
         .reset     (reset),
         .valid_in  (alu_req_valid),
         .ready_in  (alu_req_ready),
-        .data_in   ({ibuffer_if.uuid, ibuffer_if.wid, ibuffer_if.tmask, ibuffer_if.PC, next_PC,            alu_op_type,        ibuffer_if.op_mod, ibuffer_if.imm, ibuffer_if.use_PC, ibuffer_if.use_imm, ibuffer_if.rd, ibuffer_if.wb, tid,            gpr_rsp_if.rs1_data, gpr_rsp_if.rs2_data}),
-        .data_out  ({alu_req_if.uuid, alu_req_if.wid, alu_req_if.tmask, alu_req_if.PC, alu_req_if.next_PC, alu_req_if.op_type, alu_req_if.op_mod, alu_req_if.imm, alu_req_if.use_PC, alu_req_if.use_imm, alu_req_if.rd, alu_req_if.wb, alu_req_if.tid, alu_req_if.rs1_data, alu_req_if.rs2_data}),
+        .data_in   ({alu_is_max, ibuffer_if.uuid, ibuffer_if.wid, ibuffer_if.tmask, ibuffer_if.PC, next_PC,            alu_op_type,        ibuffer_if.op_mod, ibuffer_if.imm, ibuffer_if.use_PC, ibuffer_if.use_imm, ibuffer_if.rd, ibuffer_if.wb, tid,            gpr_rsp_if.rs1_data, gpr_rsp_if.rs2_data}),
+        .data_out  ({alu_req_if.is_max, alu_req_if.uuid, alu_req_if.wid, alu_req_if.tmask, alu_req_if.PC, alu_req_if.next_PC, alu_req_if.op_type, alu_req_if.op_mod, alu_req_if.imm, alu_req_if.use_PC, alu_req_if.use_imm, alu_req_if.rd, alu_req_if.wb, alu_req_if.tid, alu_req_if.rs1_data, alu_req_if.rs2_data}),
         .valid_out (alu_req_if.valid),
         .ready_out (alu_req_if.ready)
     );

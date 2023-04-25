@@ -110,6 +110,18 @@
 `define INST_ALU_IS_BR(x)    x[0]
 `define INST_ALU_IS_MUL(x)   x[1]
 
+`define INST_ALU_IS_MAX(x)   (3'h0 == x) // max identifier, the identifier is ALU_OTHER 
+`define INST_ALU_IS_UMAX(x)  (3'h1 == x) 
+
+// `define INST_ALU_IS_MIN(x)   (3'h1 == x) // min identifier, the identifier is ALU_OTHER 
+// `define INST_ALU_ZEXTH(x)    (3'h2 == x) // zexth identifier, the identifier is ALU_OTHER 
+// `define INST_ALU_SEXTH(x)    (3'h3 == x) // sexth identifier, the identifier is ALU_OTHER 
+// `define INST_ALU_SEXTB(x)    (3'h4 == x) // sextb identifier, the identifier is ALU_OTHER  
+
+//`define INST_ALU_MAX        3'h0
+// `define INST_ALU_UMAX       3'h1 
+
+ 
 `define INST_BR_EQ           4'b0000
 `define INST_BR_NE           4'b0010
 `define INST_BR_LTU          4'b0100 

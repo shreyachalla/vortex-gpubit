@@ -119,6 +119,7 @@ module VX_decode  #(
                 end else 
             `endif
                 begin
+
                     case (func3)
                         3'h0: op_type = (func7[5]) ? `INST_OP_BITS'(`INST_ALU_SUB) : `INST_OP_BITS'(`INST_ALU_ADD);
                         3'h1: op_type = `INST_OP_BITS'(`INST_ALU_SLL);
@@ -130,6 +131,13 @@ module VX_decode  #(
                         3'h7: op_type = `INST_OP_BITS'(`INST_ALU_AND);
                         default:;
                     endcase
+                    if (func7 == 7'h5 && func3 == 3'h6) begin   // added ALU MAX and MIN 
+                        op_type = `INST_OP_BITS'(`INST_ALU_OTHER);
+                        op_mod = 3'h3; 
+                    end 
+                    // else if (func7 == 5'h5 && func3 == 5'h5) begin 
+                    //     op_type = `INST_OP_BITS'(`INST_ALU_IS_MIN); 
+                    // end 
                 end          
                 use_rd = 1;
                 `USED_IREG (rd);

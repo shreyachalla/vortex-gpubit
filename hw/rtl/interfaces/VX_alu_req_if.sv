@@ -22,6 +22,7 @@ interface VX_alu_req_if ();
     wire [`NR_BITS-1:0]     rd;
     wire                    wb;    
     wire                    ready;
+    wire                    is_max; 
 
     modport master (
         output valid,
@@ -39,7 +40,8 @@ interface VX_alu_req_if ();
         output rs1_data,
         output rs2_data,
         output rd,
-        output wb,    
+        output wb,
+        output is_max,     
         input  ready
     );
 
@@ -60,6 +62,7 @@ interface VX_alu_req_if ();
         input  rs2_data,
         input  rd,
         input  wb,    
+        input is_max, 
         output ready
     );
 

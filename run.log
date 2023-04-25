@@ -1,0 +1,24 @@
+make: Entering directory '/export/nethome/schalla33/vortex-gpubit/tests/regression/prefetch'
+LD_LIBRARY_PATH=/lib:/export/nethome/schalla33/vortex-gpubit/driver/rtlsim:/opt/riscv-gnu-toolchain:/opt/riscv-gnu-toolchain:/opt/riscv-gnu-toolchain: ./prefetch -n32
+open device connection
+number of points: 512
+buffer size: 2048 bytes
+upload program
+allocate device memory
+dev_src0=0
+dev_src1=800
+dev_dst=1000
+allocate shared memory
+upload kernel argument
+upload source buffer0
+upload source buffer1
+clear destination buffer
+run tests
+start device
+wait for completion
+[2211] %Error: VX_icache_stage.sv:52: Assertion failed in TOP.Vortex.genblk2[0].cluster.genblk2[0].core.pipeline.fetch.icache_stage:                 2211: *** invalid PC=2880, wid=0, tmask=0001 (#294)
+%Error: ../../hw/rtl/VX_icache_stage.sv:52: Verilog $stop
+Aborting...
+Aborted (core dumped)
+make: *** [Makefile:65: run-rtlsim] Error 134
+make: Leaving directory '/export/nethome/schalla33/vortex-gpubit/tests/regression/prefetch'
