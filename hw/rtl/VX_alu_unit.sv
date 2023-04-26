@@ -16,7 +16,9 @@ module VX_alu_unit #(
 
     `UNUSED_PARAM (CORE_ID)
     
-    reg [`NUM_THREADS-1:0][31:0]  alu_result;    
+    reg [`NUM_THREADS-1:0][31:0]  alu_result; 
+
+    wire [`NUM_THREADS-1:0][31:0] max_result;    
     wire [`NUM_THREADS-1:0][31:0] add_result;   
     wire [`NUM_THREADS-1:0][32:0] sub_result;
     wire [`NUM_THREADS-1:0][31:0] shr_result;
@@ -32,6 +34,8 @@ module VX_alu_unit #(
     wire [1:0]          alu_op_class = `INST_ALU_OP_CLASS(alu_op); 
     wire                      is_sub = (alu_op == `INST_ALU_SUB);
 
+    wire is_max = (alu_op == `INST_ALU_OTHER); 
+
     wire [`NUM_THREADS-1:0][31:0] alu_in1 = alu_req_if.rs1_data;
     wire [`NUM_THREADS-1:0][31:0] alu_in2 = alu_req_if.rs2_data;
 
@@ -41,6 +45,11 @@ module VX_alu_unit #(
 
     for (genvar i = 0; i < `NUM_THREADS; i++) begin
         assign add_result[i] = alu_in1_PC[i] + alu_in2_imm[i];
+    end
+
+    // computing max 
+    for (genvar i = 0; i < `NUM_THREADS; i++) begin
+        assign max_result[i] = alu_in1_PC[i] > alu_in2_imm[i] ? alu_in1_PC[i] : alu_in2_imm[i];
     end
 
     for (genvar i = 0; i < `NUM_THREADS; i++) begin
@@ -69,8 +78,8 @@ module VX_alu_unit #(
     for (genvar i = 0; i < `NUM_THREADS; i++) begin
         always @(*) begin
             case (alu_op_class)                        
-                2'b00: alu_result[i] = add_result[i];               // ADD, LUI, AUIPC 
-                2'b01: alu_result[i] = {31'b0, sub_result[i][32]};  // SLTU, SLT
+                2'b00: alu_result[i] = add_result[i];  // ADD, LUI, AUIPC 
+                2'b01: alu_result[i] = is_max ? max_result[i] : {31'b0, sub_result[i][32]};  // SLTU, SLT
                 2'b10: alu_result[i] = is_sub ? sub_result[i][31:0] // SUB
                                               : shr_result[i];      // SRL, SRA
                 // 2'b11,
@@ -228,7 +237,13 @@ module VX_alu_unit #(
         if (branch_ctl_if.valid) begin
             dpi_trace("%d: core%0d-branch: wid=%0d, PC=%0h, taken=%b, dest=%0h (#%0d)\n", 
                 $time, CORE_ID, branch_ctl_if.wid, alu_commit_if.PC, branch_ctl_if.taken, branch_ctl_if.dest, alu_uuid);
-        end
+        end 
+        if (is_max) begin 
+            dpi_trace("%d: core%0d, PC=%0h, max=%0d max_result=%0d, aluin1=%0d, alu_imm=%0d, (#%0d)", 
+                $time, CORE_ID,alu_commit_if.PC, is_max, max_result[0], alu_req_if.rs1_data[0], alu_req_if.rs2_data[0], alu_uuid);
+            dpi_trace("reached this\n"); 
+        end 
+      
     end
 `endif
 

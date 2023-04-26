@@ -109,6 +109,10 @@
 `define INST_ALU_SIGNED(x)   x[0]
 `define INST_ALU_IS_BR(x)    x[0]
 `define INST_ALU_IS_MUL(x)   x[1]
+`define INST_ALU_IS_MAX(x) (3'h0 == x)
+
+`define INST_ALU_MAX        3'h6
+`define INST_ALU_MIN        3'h4
 
 `define INST_BR_EQ           4'b0000
 `define INST_BR_NE           4'b0010

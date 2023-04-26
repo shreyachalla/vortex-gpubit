@@ -119,17 +119,26 @@ module VX_decode  #(
                 end else 
             `endif
                 begin
-                    case (func3)
-                        3'h0: op_type = (func7[5]) ? `INST_OP_BITS'(`INST_ALU_SUB) : `INST_OP_BITS'(`INST_ALU_ADD);
-                        3'h1: op_type = `INST_OP_BITS'(`INST_ALU_SLL);
-                        3'h2: op_type = `INST_OP_BITS'(`INST_ALU_SLT);
-                        3'h3: op_type = `INST_OP_BITS'(`INST_ALU_SLTU);
-                        3'h4: op_type = `INST_OP_BITS'(`INST_ALU_XOR);
-                        3'h5: op_type = (func7[5]) ? `INST_OP_BITS'(`INST_ALU_SRA) : `INST_OP_BITS'(`INST_ALU_SRL);
-                        3'h6: op_type = `INST_OP_BITS'(`INST_ALU_OR);
-                        3'h7: op_type = `INST_OP_BITS'(`INST_ALU_AND);
-                        default:;
-                    endcase
+                    if (func7 == 7'h5) begin 
+                        case (func3) 
+                            3'h4: op_type = `INST_OP_BITS'(`INST_ALU_OTHER); // maxX
+                            3'h6: op_type = `INST_OP_BITS'(`INST_ALU_OTHER);
+                            default: ; 
+                        endcase 
+                    end 
+                    else begin 
+                        case (func3)
+                            3'h0: op_type = (func7[5]) ? `INST_OP_BITS'(`INST_ALU_SUB) : `INST_OP_BITS'(`INST_ALU_ADD);
+                            3'h1: op_type = `INST_OP_BITS'(`INST_ALU_SLL);
+                            3'h2: op_type = `INST_OP_BITS'(`INST_ALU_SLT);
+                            3'h3: op_type = `INST_OP_BITS'(`INST_ALU_SLTU);
+                            3'h4: op_type = `INST_OP_BITS'(`INST_ALU_XOR);
+                            3'h5: op_type = (func7[5]) ? `INST_OP_BITS'(`INST_ALU_SRA) : `INST_OP_BITS'(`INST_ALU_SRL);
+                            3'h6: op_type = `INST_OP_BITS'(`INST_ALU_OR);
+                            3'h7: op_type = `INST_OP_BITS'(`INST_ALU_AND);
+                            default:;
+                        endcase
+                    end 
                 end          
                 use_rd = 1;
                 `USED_IREG (rd);
