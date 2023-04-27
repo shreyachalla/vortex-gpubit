@@ -23,6 +23,9 @@ interface VX_alu_req_if ();
     wire                    wb;    
     wire                    ready;
 
+    wire [6:0] func7; 
+    wire [2:0] func3; 
+
     modport master (
         output valid,
         output uuid,
@@ -39,7 +42,9 @@ interface VX_alu_req_if ();
         output rs1_data,
         output rs2_data,
         output rd,
-        output wb,    
+        output wb, 
+        output func3, 
+        output func7,   
         input  ready
     );
 
@@ -60,6 +65,8 @@ interface VX_alu_req_if ();
         input  rs2_data,
         input  rd,
         input  wb,    
+        input func3, 
+        input func7, 
         output ready
     );
 

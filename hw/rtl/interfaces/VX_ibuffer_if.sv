@@ -51,7 +51,9 @@ interface VX_ibuffer_if ();
         output rs1_n,
         output rs2_n,
         output rs3_n,
-        output wid_n,        
+        output wid_n,     
+        output func3, 
+        output func7,   
         input  ready
     );
 
@@ -76,7 +78,9 @@ interface VX_ibuffer_if ();
         input  rs1_n,
         input  rs2_n,
         input  rs3_n,
-        input  wid_n,        
+        input  wid_n,  
+        input func3, 
+        input func7,       
         output ready
     );
     

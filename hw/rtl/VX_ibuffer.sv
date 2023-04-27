@@ -181,7 +181,9 @@ module VX_ibuffer #(
                         decode_if.rd, 
                         decode_if.rs1, 
                         decode_if.rs2, 
-                        decode_if.rs3};
+                        decode_if.rs3, 
+                        decode_if.func3, 
+                        decode_if.func7};
 
     assign ibuffer_if.valid = deq_valid;
     assign ibuffer_if.wid   = deq_wid;
@@ -198,7 +200,9 @@ module VX_ibuffer #(
             ibuffer_if.rd, 
             ibuffer_if.rs1, 
             ibuffer_if.rs2, 
-            ibuffer_if.rs3} = deq_instr;
+            ibuffer_if.rs3, 
+            ibuffer_if.func3,
+            ibuffer_if.func7} = deq_instr;
 
     // scoreboard forwarding
     assign ibuffer_if.wid_n = deq_wid_n;

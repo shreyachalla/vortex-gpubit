@@ -121,8 +121,8 @@ module VX_decode  #(
                 begin
                     if (func7 == 7'h5) begin 
                         case (func3) 
-                            3'h4: op_type = `INST_OP_BITS'(`INST_ALU_OTHER); // maxX
-                            3'h6: op_type = `INST_OP_BITS'(`INST_ALU_OTHER);
+                            3'h4: op_type = `INST_OP_BITS'(`INST_ALU_OTHER); 
+                            3'h6: op_type = `INST_OP_BITS'(`INST_ALU_OTHER); // maxX
                             default: ; 
                         endcase 
                     end 
@@ -438,6 +438,9 @@ module VX_decode  #(
     assign decode_if.imm       = imm;
     assign decode_if.use_PC    = use_PC;
     assign decode_if.use_imm   = use_imm;
+
+    assign decode_if.func3 = func3; 
+    assign decode_if.func7 = func7; 
 
     ///////////////////////////////////////////////////////////////////////////
 

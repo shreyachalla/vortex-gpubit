@@ -238,11 +238,14 @@ module VX_alu_unit #(
             dpi_trace("%d: core%0d-branch: wid=%0d, PC=%0h, taken=%b, dest=%0h (#%0d)\n", 
                 $time, CORE_ID, branch_ctl_if.wid, alu_commit_if.PC, branch_ctl_if.taken, branch_ctl_if.dest, alu_uuid);
         end 
-        if (is_max) begin 
-            dpi_trace("%d: core%0d, PC=%0h, max=%0d max_result=%0d, aluin1=%0d, alu_imm=%0d, (#%0d)", 
-                $time, CORE_ID,alu_commit_if.PC, is_max, max_result[0], alu_req_if.rs1_data[0], alu_req_if.rs2_data[0], alu_uuid);
-            dpi_trace("reached this\n"); 
-        end 
+
+        dpi_trace("Testing: %d: func3: %0d func7: %0d(#%0d)\n", 
+                $time, alu_req_if.func3, alu_req_if.func7); 
+        // if (is_max) begin 
+        //     dpi_trace("%d: core%0d, PC=%0h, max=%0d max_result=%0d, aluin1=%0d, alu_imm=%0d, (#%0d)", 
+        //         $time, CORE_ID,alu_commit_if.PC, is_max, max_result[0], alu_req_if.rs1_data[0], alu_req_if.rs2_data[0], alu_uuid);
+        //     dpi_trace("reached this\n"); 
+        // end 
       
     end
 `endif
