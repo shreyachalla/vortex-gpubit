@@ -16,6 +16,11 @@ module VX_alu_unit #(
 
     `UNUSED_PARAM (CORE_ID)
     
+    wire is_umax = alu_req_if.func3 == 7 && alu_req_if.func7 == 5 ? 1 : 0; // aluop = 1 
+    wire is_umin = alu_req_if.func3 == 5 && alu_req_if.func7 == 5 ? 1 : 0; // aluop = 
+    wire is_max = alu_req_if.func3 == 6 && alu_req_if.func7 == 5 ? 1 : 0; 
+    wire is_min = alu_req_if.func3 == 4 && alu_req_if.func7 == 5 ? 1 : 0; 
+    wire is_zexth = alu_req_if.func3 == 4 && alu_req_if.func7 == 4 ? 1 : 0; 
     reg [`NUM_THREADS-1:0][31:0]  alu_result;    
     wire [`NUM_THREADS-1:0][31:0] add_result;   
     wire [`NUM_THREADS-1:0][32:0] sub_result;
@@ -69,13 +74,45 @@ module VX_alu_unit #(
     for (genvar i = 0; i < `NUM_THREADS; i++) begin
         always @(*) begin
             case (alu_op_class)                        
-                2'b00: alu_result[i] = add_result[i];               // ADD, LUI, AUIPC 
-                2'b01: alu_result[i] = {31'b0, sub_result[i][32]};  // SLTU, SLT
+                2'b00: 
+                begin 
+                  if (is_min) begin 
+                        alu_result[i] = $signed(alu_in1[i]) < $signed(alu_in2[i]) ? alu_in1[i] : alu_in2[i]; 
+                    end
+                    else if (is_zexth) begin 
+                        alu_result[i] = alu_in1[i] & 32'h0000FFFF; 
+                         dpi_trace("alu_rs1=%0d, alu_rs2=%0d, alu_result=%0d\n", alu_in1[i], alu_in2[i], alu_result[i]);
+                    end 
+                    else begin 
+                        alu_result[i] = add_result[i]; 
+                    end 
+                end              // ADD, LUI, AUIPC 
+                2'b01:
+                    begin 
+                        if (is_umin) begin 
+                             alu_result[i] = alu_in1[i] < alu_in2[i] ? alu_in1[i] : alu_in2[i]; 
+                        end 
+                        else if (is_max) begin 
+                            alu_result[i] = $signed(alu_in1[i]) > $signed(alu_in2[i]) ? alu_in1[i] : alu_in2[i]; 
+                        end 
+                        else if (is_umax) begin 
+                            alu_result[i] = alu_in1[i] > alu_in2[i] ? alu_in1[i] : alu_in2[i]; 
+                        end 
+                        else begin 
+                            alu_result[i] = {31'b0, sub_result[i][32]};  // SLTU, SLT
+                        end 
+                    end 
                 2'b10: alu_result[i] = is_sub ? sub_result[i][31:0] // SUB
                                               : shr_result[i];      // SRL, SRA
-                // 2'b11,
+
+                //2'b11: alu_result[i] = is_zexth ? alu_in1[i] & 32'h0000FFFF : 0; // ZEXTH 
                 default: alu_result[i] = msc_result[i];             // AND, OR, XOR, SLL
             endcase
+           
+           
+            // dpi_trace("%d: core%0d: func3=%0d, func7=%0h is_umax=%0d, is_umin=%0d, is_min=%0d, is_max=%0d, zexth=%0d, alu_result=%0d, alu_op=%0d, alu_rs1=%0d, alu_rs2=%0d, (#%0d)\n",  
+            // $time, CORE_ID, alu_req_if.func3, alu_req_if.func7, is_umax, is_umin, is_min, is_max, is_zexth, alu_result[i], alu_op_class, alu_in1[i], alu_in2[i], alu_uuid); 
+        
         end       
     end
 
@@ -224,12 +261,14 @@ module VX_alu_unit #(
     assign alu_req_if.ready = ready_in;
 
 `ifdef DBG_TRACE_CORE_PIPELINE
-    always @(posedge clk) begin
-        if (branch_ctl_if.valid) begin
-            dpi_trace("%d: core%0d-branch: wid=%0d, PC=%0h, taken=%b, dest=%0h (#%0d)\n", 
-                $time, CORE_ID, branch_ctl_if.wid, alu_commit_if.PC, branch_ctl_if.taken, branch_ctl_if.dest, alu_uuid);
-        end
-    end
+    // always @(posedge clk) begin
+    //     if (branch_ctl_if.valid) begin
+    //         dpi_trace("%d: core%0d-branch: wid=%0d, PC=%0h, taken=%b, dest=%0h (#%0d)\n", 
+    //             $time, CORE_ID, branch_ctl_if.wid, alu_commit_if.PC, branch_ctl_if.taken, branch_ctl_if.dest, alu_uuid);
+    //     end
+    //     dpi_trace("%d: core%0d: func3=%0d, func7=%0h is_max=%0d, alu_result=%0d, alu_op=%0d (#%0d)\n", 
+    //             $time, CORE_ID, alu_req_if.func3, alu_req_if.func7, is_max, add_result[alu_req_if.tid], alu_op_class, alu_uuid);
+    // end
 `endif
 
 endmodule

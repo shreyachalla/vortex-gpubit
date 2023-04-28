@@ -12,14 +12,20 @@ void kernel_body(int task_id, kernel_arg_t* arg) {
 	uint32_t offset = task_id * count;
 
 	for (uint32_t i = 0; i < count; ++i) {
-		// vx_umax(54, 200, 10); 
-		// vx_max(54, -200, 10); 
-		// vx_umin(54, 200, 10);
-		// vx_min(-54, -200, 10);
+	
+		// max: src1 is arg2, src2 is arg3
+		//vx_max(0x5, -0x3, 0x1); 
+		//vx_umax(0x5, 0x3, 0x1); 
+		// vx_min(0x5, 0x3, 0x1); 
+		// vx_umin(0x5, 0x3, 0x1);
+		//vx_umin(0x5, -0x3, 10);
 
-		vx_sexth(255, 4);
-		vx_sextb(65535, 4);
-		//vx_zexth(8, -2, 10); 
+		// vx_sexth(255, 4);
+		// vx_sextb(65535, 4);
+
+		// zexth: 
+		
+		vx_zexth(0x5, 0x3, 0x1); 
 	
 		dst_ptr[offset+i] = src0_ptr[offset+i] + src1_ptr[offset+i];
 	}

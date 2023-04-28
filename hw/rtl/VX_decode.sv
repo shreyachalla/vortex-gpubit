@@ -429,6 +429,8 @@ module VX_decode  #(
     assign decode_if.imm       = imm;
     assign decode_if.use_PC    = use_PC;
     assign decode_if.use_imm   = use_imm;
+    assign decode_if.func3 = func3; 
+    assign decode_if.func7 = func7; 
 
     ///////////////////////////////////////////////////////////////////////////
 

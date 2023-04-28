@@ -23,6 +23,8 @@ interface VX_decode_if ();
     wire [`NR_BITS-1:0]     rs3;
     wire                    ready;
 
+    wire [6:0] func7; 
+    wire [2:0] func3; 
     modport master (
         output valid,
         output uuid,
@@ -40,6 +42,8 @@ interface VX_decode_if ();
         output rs1,
         output rs2,
         output rs3,
+        output func3, 
+        output func7, 
         input  ready
     );
 
@@ -60,6 +64,8 @@ interface VX_decode_if ();
         input  rs1,
         input  rs2,
         input  rs3,
+        input func3, 
+        input func7,
         output ready
     );
 
