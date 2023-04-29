@@ -114,7 +114,7 @@ module VX_issue #(
         .reset      (dispatch_reset),
         .ibuffer_if (dispatch_if),
         .gpr_rsp_if (gpr_rsp_if),
-        .decode_if (decode_if),  // added here
+        .decode_if (decode_if),  // added decode here
         .alu_req_if (alu_req_if),
         .lsu_req_if (lsu_req_if),        
         .csr_req_if (csr_req_if),

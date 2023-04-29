@@ -23,8 +23,10 @@ interface VX_alu_req_if ();
     wire                    wb;    
     wire                    ready;
 
+    // signals to transfer
     wire [6:0] func7;
     wire [2:0] func3; 
+    wire [11:0]             u_12;
 
     modport master (
         output valid,
@@ -38,6 +40,7 @@ interface VX_alu_req_if ();
         output use_PC,
         output use_imm,
         output imm,
+        output u_12, 
         output tid,
         output rs1_data,
         output rs2_data,
@@ -60,6 +63,7 @@ interface VX_alu_req_if ();
         input  use_PC,
         input  use_imm,
         input  imm,
+        input u_12, 
         input  tid,
         input  rs1_data,
         input  rs2_data,
