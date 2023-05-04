@@ -50,7 +50,7 @@ module VX_dispatch (
         .reset     (reset),
         .valid_in  (alu_req_valid),
         .ready_in  (alu_req_ready),
-        // attaching signals needed
+        // attaching signals needed 
         .data_in   ({decode_if.u_12, decode_if.func3, decode_if.func7, ibuffer_if.uuid, ibuffer_if.wid, ibuffer_if.tmask, ibuffer_if.PC, next_PC,            alu_op_type,        ibuffer_if.op_mod, ibuffer_if.imm, ibuffer_if.use_PC, ibuffer_if.use_imm, ibuffer_if.rd, ibuffer_if.wb, tid,            gpr_rsp_if.rs1_data, gpr_rsp_if.rs2_data}),
         .data_out  ({alu_req_if.u_12, alu_req_if.func3, alu_req_if.func7, alu_req_if.uuid, alu_req_if.wid, alu_req_if.tmask, alu_req_if.PC, alu_req_if.next_PC, alu_req_if.op_type, alu_req_if.op_mod, alu_req_if.imm, alu_req_if.use_PC, alu_req_if.use_imm, alu_req_if.rd, alu_req_if.wb, alu_req_if.tid, alu_req_if.rs1_data, alu_req_if.rs2_data}),
         .valid_out (alu_req_if.valid),

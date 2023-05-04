@@ -218,12 +218,12 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
       if (func3 == 0x7) {
         // UMAX 
         printf("**UMAX**: ");
-        if ((WordI)rsdata[t][0].i > (WordI)rsdata[t][1].i) {
+        if ((unsigned int)(WordI)rsdata[t][0].i > (unsigned int)(WordI)rsdata[t][1].i) {
           rddata[t].i = (WordI)rsdata[t][0].i; 
-          printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+          printf("src1: %u, src2: %u, result: %u\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
         } else {
           rddata[t].i = (WordI)rsdata[t][1].i;
-          printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+          printf("src1: %u, src2: %u, result: %u\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
         }
 
       }
@@ -252,12 +252,12 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
        if (func7== 0x5 && func3 == 0x5) {
         // UMIN 
         printf("**UMIN**: ");
-        if ((WordI)rsdata[t][0].i < (WordI)rsdata[t][1].i) {
+        if ((unsigned int)(WordI)rsdata[t][0].i < (unsigned int)(WordI)rsdata[t][1].i) {
           rddata[t].i = (WordI)rsdata[t][0].i; 
-          printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+          printf("src1: %u, src2: %u, result: %u\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
         } else {
           rddata[t].i = (WordI)rsdata[t][1].i;
-          printf("src1: %d, src2: %d, result: %d\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
+          printf("src1: %u, src2: %u, result: %u\n", rsdata[t][0].i, rsdata[t][1].i, rddata[t].i);
         }
 
       }
@@ -437,8 +437,14 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
           } else {
             rddata[t].i = sext(rsdata[t][0].i & 0xFF, 32); 
           }
+
+          // print correct signedness 
+          if (rsdata[t][0].i > 0) {
+            printf("src1: %d, result: %u\n", rsdata[t][0].i, int(rddata[t].i));
+          } else {
+              printf("src1: %d, result: %d\n", rsdata[t][0].i, int(rddata[t].i));
+          }
           
-          printf("src1: %d, result: %d\n", rsdata[t][0].i, int(rddata[t].i));
 
         } else if (immsrc == 5) {
           // sext.h 
@@ -450,7 +456,13 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
           } else {
             rddata[t].i = sext(rsdata[t][0].i & 0xFFFF, 32); 
           }
-           printf("src1: %d, result: %d\n", rsdata[t][0].i, int(rddata[t].i));
+          // print correct signedness 
+          if (rsdata[t][0].i > 0) {
+            printf("src1: %d, result: %u\n", rsdata[t][0].i, int(rddata[t].i));
+          } else {
+              printf("src1: %d, result: %d\n", rsdata[t][0].i, int(rddata[t].i));
+          }
+           
         }
       }
       

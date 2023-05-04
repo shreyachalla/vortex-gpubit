@@ -126,42 +126,43 @@ inline void vx_prefetch(unsigned addr) {
 
 // Maximum 
 inline void vx_max(signed val1, signed val2, signed val3) {
-    // func3 = 6 
+    // func3 = 6, func7 = 5 
     asm volatile (".insn r 0x33, 6, 5, %0, %1, %2" :: "r"(val1), "r"(val2), "r"(val3));
 }
 
 // Unsigned Maximum 
 inline void vx_umax(unsigned val1, unsigned val2, unsigned val3) {
-    // func3 = 7
+    // func3 = 7, func7 = 5
     asm volatile (".insn r 0x33, 7, 5, %0, %1, %2" :: "r"(val1), "r"(val2), "r"(val3));
 }
 
 // Minimum 
 inline void vx_min(signed val1, signed val2, signed val3) {
-    // func3 = 8 
+    // func3 = 4, func7 = 4 
     asm volatile (".insn r 0x33, 4, 5, %0, %1, %2" :: "r"(val1), "r"(val2), "r"(val3));
 }
 
 // Unsigned Minimum  
 inline void vx_umin(unsigned val1, unsigned val2, unsigned val3) {
-    // func3 = 9 
+    // func3 = 9, func7 = 5  
     asm volatile (".insn r 0x33, 5, 5, %0, %1, %2" :: "r"(val1), "r"(val2), "r"(val3));
 }
 
 // zext.h 
 inline void vx_zexth(unsigned val1, unsigned val2, unsigned val3) {
+    // func3 = 4, func7 = 4
     asm volatile (".insn r 0x33, 4, 4, %0, %1, %2" :: "r"(val1), "r"(val2), "r"(val3));
 }
 
 // sext.b
 inline void vx_sextb(signed val1, signed val2) {
-    // 0x604 
+    // 31:20 0x604 
     asm volatile (".insn i 0x13, 1, %0, %1, 0x604" :: "r"(val2), "r"(val1));
 }
 
 //sext.h 
 inline void vx_sexth(signed val1, signed val2) {
-    // 0x605
+    // 31:20 0x605
     asm volatile (".insn i 0x13, 1, %0, %1, 0x605" :: "r"(val2), "r"(val1));
 }
 

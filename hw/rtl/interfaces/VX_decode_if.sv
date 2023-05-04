@@ -22,7 +22,7 @@ interface VX_decode_if ();
     wire [`NR_BITS-1:0]     rs2;
     wire [`NR_BITS-1:0]     rs3;
     wire                    ready;
-
+    // signals to send to ALU 
     wire [6:0] func7; 
     wire [2:0] func3; 
     wire [11:0] u_12; 

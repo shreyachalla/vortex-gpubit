@@ -16,14 +16,15 @@ module VX_alu_unit #(
 
     `UNUSED_PARAM (CORE_ID)
     
-    wire is_umax = alu_req_if.func3 == 7 && alu_req_if.func7 == 5 ? 1 : 0; // aluop = 1 
-    wire is_umin = alu_req_if.func3 == 5 && alu_req_if.func7 == 5 ? 1 : 0; // aluop = 
+    // check for a special bit manip instruction 
+    wire is_umax = alu_req_if.func3 == 7 && alu_req_if.func7 == 5 ? 1 : 0; 
+    wire is_umin = alu_req_if.func3 == 5 && alu_req_if.func7 == 5 ? 1 : 0; 
     wire is_max = alu_req_if.func3 == 6 && alu_req_if.func7 == 5 ? 1 : 0; 
     wire is_min = alu_req_if.func3 == 4 && alu_req_if.func7 == 5 ? 1 : 0; 
     wire is_zexth = alu_req_if.func3 == 4 && alu_req_if.func7 == 4 ? 1 : 0; 
     wire is_sext = alu_req_if.func3 == 1 && alu_req_if.func7 == 7'h30 ?  1 : 0; 
 
-    
+    // is a bit manip, so we execute our logic 
     wire bit_manip = is_umax || is_umin || is_max || is_min || is_zexth || is_sext; 
     reg [`NUM_THREADS-1:0][31:0]  alu_result;    
     wire [`NUM_THREADS-1:0][31:0] add_result;   
@@ -80,27 +81,27 @@ module VX_alu_unit #(
 
     for (genvar i = 0; i < `NUM_THREADS; i++) begin
         always @(*) begin
-            if (bit_manip) begin  // if it is one of our instructions 
-                if (is_min) begin 
+            if (bit_manip) begin  // if it is one of our custom instructions 
+                if (is_min) begin  // min signed 
                         alu_result[i] = $signed(alu_in1[i]) < $signed(alu_in2[i]) ? alu_in1[i] : alu_in2[i]; 
                 end
-                else if (is_zexth) begin 
+                else if (is_zexth) begin // zext, apply a bit mask to extract lower half word
                     alu_result[i] = alu_in1[i] & 32'h0000FFFF; 
                 end 
-                else if (is_umin) begin 
+                else if (is_umin) begin // unsigned min 
                     alu_result[i] = alu_in1[i] < alu_in2[i] ? alu_in1[i] : alu_in2[i]; 
                 end 
-                else if (is_max) begin 
+                else if (is_max) begin // max signed 
                     alu_result[i] = $signed(alu_in1[i]) > $signed(alu_in2[i]) ? alu_in1[i] : alu_in2[i]; 
                 end 
-                else if (is_umax) begin 
+                else if (is_umax) begin // unsigned max 
                     alu_result[i] = alu_in1[i] > alu_in2[i] ? alu_in1[i] : alu_in2[i]; 
                 end 
                 else if (is_sext) begin 
-                    if (alu_req_if.u_12 == 12'h605) begin  //SEXT.H 
+                    if (alu_req_if.u_12 == 12'h605) begin  //SEXT.H, extract lower 16 bits, and sign extend the 16th bit 
                         alu_result[i] = {{16{signed_alu1[i][15]}}, signed_alu1[i][15:0]}; 
                     end 
-                    else if (alu_req_if.u_12 == 12'h604) begin //SEXT.B
+                    else if (alu_req_if.u_12 == 12'h604) begin //SEXT.B,  //SEXT.H, extract lower 8 bits, and sign extend the 8th bit
                         alu_result[i] = {{24{signed_alu1[i][7]}}, signed_alu1[i][7:0]};  
                     end 
                     
@@ -116,6 +117,7 @@ module VX_alu_unit #(
                     default: alu_result[i] = msc_result[i];             // AND, OR, XOR, SLL
                 endcase
             end
+            // print statement to run.log 
              dpi_trace("alu_u_12=%d, aluPC=%d, %d: core%0d: func3=%0d, func7=%0h is_umax=%0d, is_umin=%0d, is_min=%0d, is_max=%0d, zexth=%0d, is_sext=%0d, alu_result=%0d, alu_op=%0d, alu_rs1=%0d, alu_rs2=%0d, (#%0d)\n",  
                 alu_req_if.u_12, alu_in1_PC[i], $time, CORE_ID, alu_req_if.func3, alu_req_if.func7, is_umax, is_umin, is_min, is_max, is_zexth, is_sext, $signed(alu_result[i]), alu_op_class, $signed(alu_in1[i]), $signed(alu_in2[i]), alu_uuid); 
         end  
