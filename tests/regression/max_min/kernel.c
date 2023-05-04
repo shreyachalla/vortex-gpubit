@@ -35,8 +35,8 @@ void kernel_body(int task_id, kernel_arg_t* arg) {
 
 		// zexth
 		// arg2 is the value to be zero extended 
-		vx_zexth(0x5, -0xFF, 0x1); 
-		//vx_zexth(0x5, 0xFF, 0x1); 
+		vx_zexth(0x5, -0xFF, 0x0); 
+		//vx_zexth(0x5, 0xFF, 0x0); 
 	
 		dst_ptr[offset+i] = src0_ptr[offset+i] + src1_ptr[offset+i];
 	}
