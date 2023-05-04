@@ -23,6 +23,7 @@ module VX_alu_unit #(
     wire is_zexth = alu_req_if.func3 == 4 && alu_req_if.func7 == 4 ? 1 : 0; 
     wire is_sext = alu_req_if.func3 == 1 && alu_req_if.func7 == 7'h30 ?  1 : 0; 
 
+    
     wire bit_manip = is_umax || is_umin || is_max || is_min || is_zexth || is_sext; 
     reg [`NUM_THREADS-1:0][31:0]  alu_result;    
     wire [`NUM_THREADS-1:0][31:0] add_result;   
@@ -42,6 +43,7 @@ module VX_alu_unit #(
 
     wire [`NUM_THREADS-1:0][31:0] alu_in1 = alu_req_if.rs1_data;
     wire [`NUM_THREADS-1:0][31:0] alu_in2 = alu_req_if.rs2_data;
+    wire [`NUM_THREADS-1:0][31:0] signed_alu1 = $signed(alu_req_if.rs1_data);
 
     wire [`NUM_THREADS-1:0][31:0] alu_in1_PC   = alu_req_if.use_PC ? {`NUM_THREADS{alu_req_if.PC}} : alu_in1;
     wire [`NUM_THREADS-1:0][31:0] alu_in2_imm  = alu_req_if.use_imm ? {`NUM_THREADS{alu_req_if.imm}} : alu_in2;
@@ -96,11 +98,10 @@ module VX_alu_unit #(
                 end 
                 else if (is_sext) begin 
                     if (alu_req_if.u_12 == 12'h605) begin  //SEXT.H 
-
-                        alu_result[i] = {{16{alu_in1[i][15]}}, alu_in1[i][15:0]}; 
+                        alu_result[i] = {{16{signed_alu1[i][15]}}, signed_alu1[i][15:0]}; 
                     end 
                     else if (alu_req_if.u_12 == 12'h604) begin //SEXT.B
-                        alu_result[i] = {{24{alu_in1[i][7]}}, alu_in1[i][7:0]};  
+                        alu_result[i] = {{24{signed_alu1[i][7]}}, signed_alu1[i][7:0]};  
                     end 
                     
                 end 
@@ -116,7 +117,7 @@ module VX_alu_unit #(
                 endcase
             end
              dpi_trace("alu_u_12=%d, aluPC=%d, %d: core%0d: func3=%0d, func7=%0h is_umax=%0d, is_umin=%0d, is_min=%0d, is_max=%0d, zexth=%0d, is_sext=%0d, alu_result=%0d, alu_op=%0d, alu_rs1=%0d, alu_rs2=%0d, (#%0d)\n",  
-                alu_req_if.u_12, alu_in1_PC[i], $time, CORE_ID, alu_req_if.func3, alu_req_if.func7, is_umax, is_umin, is_min, is_max, is_zexth, is_sext, alu_result[i], alu_op_class, $signed(alu_in1[i]), $signed(alu_in2[i]), alu_uuid); 
+                alu_req_if.u_12, alu_in1_PC[i], $time, CORE_ID, alu_req_if.func3, alu_req_if.func7, is_umax, is_umin, is_min, is_max, is_zexth, is_sext, $signed(alu_result[i]), alu_op_class, $signed(alu_in1[i]), $signed(alu_in2[i]), alu_uuid); 
         end  
           
     end 

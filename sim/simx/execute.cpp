@@ -202,30 +202,6 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
     for (uint32_t t = 0; t < num_threads; ++t) {
       if (!tmask_.test(t))
         continue;
-      
-      // if (func7 == 30) {
-      //   if (func3 == 4) {
-      //     // SEXT.B
-      //     printf("**SEXT.B**\n"); 
-      //     rddata[t].i = sext(rsdata[t][0].i & 0xFF, 32); 
-      //     printf("src1: %d, result: %d\n", rsdata[t][0].i, rddata[t].i);
-
-      //   } else {
-      //     // SEXT.H 
-      //     printf("**SEXT.H**\n"); 
-      //     rddata[t].i = sext(rsdata[t][0].i & 0xFFFF, 32); 
-      //     printf("src1: %d, result: %d\n", rsdata[t][0].i, rddata[t].i);
-
-      //   }
-        // printf("************\n");
-        // printf("rsdata 1: %d\n", rsdata[t][0].i); 
-        // printf("rsdata 2: %d\n", rsdata[t][1].i); 
-        // printf("rddate: %d\n", rddata[t].i); 
-        // printf("immsrc: %d\n", immsrc); 
-      //} 
-       
-      // printf("reaching");
-      // printf("func7: %d", func7);
       if (func7 == 0x5 && func3 == 0x6) {
         // MAX 
         printf("**MAX**: "); 
@@ -451,11 +427,6 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
         continue;
       
       if (func3 == 1) {
-        // printf("************\n");
-        // printf("rsdata 1: %d\n", rsdata[t][0].i); 
-        // printf("rsdata 2: %d\n", rsdata[t][1].i); 
-        // printf("rddate: %d\n", rddata[t].i); 
-        // printf("immsrc: %d\n", immsrc); 
         if (immsrc == 4) {
           // sext.b 
           printf("**SEXT.B**\n"); 
@@ -467,7 +438,7 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
             rddata[t].i = sext(rsdata[t][0].i & 0xFF, 32); 
           }
           
-          printf("src1: %d, result: %u\n", rsdata[t][0].i, int(rddata[t].i));
+          printf("src1: %d, result: %d\n", rsdata[t][0].i, int(rddata[t].i));
 
         } else if (immsrc == 5) {
           // sext.h 
@@ -479,7 +450,7 @@ void Warp::execute(const Instr &instr, pipeline_trace_t *trace) {
           } else {
             rddata[t].i = sext(rsdata[t][0].i & 0xFFFF, 32); 
           }
-           printf("src1: %d, result: %u\n", rsdata[t][0].i, int(rddata[t].i));
+           printf("src1: %d, result: %d\n", rsdata[t][0].i, int(rddata[t].i));
         }
       }
       
